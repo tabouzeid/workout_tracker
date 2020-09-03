@@ -66,7 +66,13 @@ app.put("/api/workouts/:id", (req, res) => {
 });
 
 app.get("/api/workouts/range", (req, res) => {
-    res.end();
+    db.Workout.find({})
+    .then(workouts => {
+      res.json(workouts);
+    })
+    .catch(err => {
+      res.json(err);
+    });
 });
 
 app.listen(PORT, () => {
