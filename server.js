@@ -66,7 +66,9 @@ app.put("/api/workouts/:id", (req, res) => {
 });
 
 app.get("/api/workouts/range", (req, res) => {
-    db.Workout.find({})
+    let filterDate = new Date();
+    filterDate = filterDate.setDate(filterDate.getDate() - 7);
+    db.Workout.find({day: { $gte: filterDate }})
     .then(workouts => {
       res.json(workouts);
     })
