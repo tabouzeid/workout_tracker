@@ -34,38 +34,40 @@ app.get("/stats", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/stats.html"));
 });
 
-app.get("/api/workouts", (req, res) => {
+app.get("/api/workouts", (req, res, next) => {
     db.Workout.find({})
     .then(workouts => {
       res.json(workouts);
     })
     .catch(err => {
-      res.json(err);
+        console.log(err);
+        next(err);
     });
 });
 
-app.post("/api/workouts", ({body}, res) => {
+app.post("/api/workouts", ({body}, res, next) => {
     db.Workout.create(body)
     .then(workout => {
       res.json(workout);
     })
     .catch(err => {
-      res.json(err);
+      console.log(err);
+      next(err);
     });
 });
 
-app.put("/api/workouts/:id", (req, res) => {
-    console.log(req.body);
-    db.Workout.findOneAndUpdate({_id: req.params.id}, {$push: {exercises: req.body}}, { new: true })
+app.put("/api/workouts/:id", (req, res, next) => {
+    db.Workout.findOneAndUpdate({_id: req.params.id}, {$push: {exercises: req.body}}, { new: true, runValidators: true, })
     .then(workout => {
       res.json(workout);
     })
     .catch(err => {
-      res.json(err);
+        console.log(err);
+        next(err);
     });
 });
 
-app.get("/api/workouts/range", (req, res) => {
+app.get("/api/workouts/range", (req, res, next) => {
     let filterDate = new Date();
     filterDate = filterDate.setDate(filterDate.getDate() - 7);
     db.Workout.find({day: { $gte: filterDate }})
@@ -73,7 +75,8 @@ app.get("/api/workouts/range", (req, res) => {
       res.json(workouts);
     })
     .catch(err => {
-      res.json(err);
+        console.log(err);
+        next(err);
     });
 });
 
